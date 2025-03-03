@@ -1,205 +1,282 @@
 ---
-// Props para determinar el estado actual
 interface Props {
-  mode?: 'web' | 'cv';
-  theme?: 'light' | 'dark';
+  mode?: "web" | "cv";
+  theme?: "light" | "dark";
 }
 
-const { mode = 'web', theme = 'light' } = Astro.props;
+const { mode = "web", theme = "light" } = Astro.props;
 
-// Solo mostramos la navegación completa en modo web
-const showFullNav = mode === 'web';
+const showFullNav = mode === "web";
 
-// Definimos las secciones para la navegación
 const navItems = [
-  { name: 'Inicio', href: '#inicio', icon: 'home' },
-  { name: 'Acerca de mí', href: '#acerca-de-mi', icon: 'user' },
-  { name: 'Certificados', href: '#certificados', icon: 'certificate' },
-  { name: 'Proyectos', href: '#proyectos', icon: 'code' },
-  { name: 'Skills', href: '#skills', icon: 'tools' }
+  { name: "Inicio", href: "#inicio", icon: "home" },
+  { name: "Acerca de mí", href: "#acerca-de-mi", icon: "user" },
+  { name: "Certificados", href: "#certificados", icon: "certificate" },
+  { name: "Proyectos", href: "#proyectos", icon: "code" },
+  { name: "Skills", href: "#skills", icon: "tools" },
 ];
 ---
 
-<nav id="main-nav" class={`
-  fixed z-50 w-full transition-all duration-300
-  ${mode === 'web' && theme === 'light' ? 'bg-web-light-background text-web-light-text' : ''}
-  ${mode === 'web' && theme === 'dark' ? 'bg-web-dark-background text-web-dark-text' : ''}
-  ${mode === 'cv' && theme === 'light' ? 'bg-cv-light-background text-cv-light-text' : ''}
-  ${mode === 'cv' && theme === 'dark' ? 'bg-cv-dark-background text-cv-dark-text' : ''}
-`}>
+<nav
+  id="main-nav"
+  class="fixed z-50 w-full transition-all duration-300 bg-web-light-background text-web-light-text dark:bg-web-dark-background dark:text-web-dark-text"
+>
   <div class="max-w-container mx-auto px-4 sm:px-6">
     <div class="flex justify-between items-center py-4">
       <!-- Logo / Nombre -->
       <div class="flex items-center">
-        <a href="#" class="text-xl font-bold">Tu Nombre</a>
+        <a href="#" class="text-xl font-bold dark:color-bg-red-600">Mauricio Palacio</a>
       </div>
 
       <!-- Navegación principal (solo visible en modo web) -->
-      {showFullNav && (
-        <div class="hidden md:flex space-x-8">
-          {navItems.map(item => (
-            <a 
-              href={item.href} 
-              class="hover:text-primary transition-colors"
+      {
+        showFullNav && (
+          <div class="hidden md:flex space-x-8">
+            {navItems.map((item) => (
+              <a
+                href={item.href}
+                class="hover:text-web-light-primary dark:hover:text-web-dark-primary transition-colors"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      <!-- Botones de modo y tema -->
+      <div class="flex items-center space-x-4">
+        <!-- Botón de cambio de tema (claro/oscuro) -->
+        <button
+          id="theme-toggle"
+          class="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500"
+          aria-label="Cambiar tema"
+        >
+          <span id="light-icon" class="hidden">🌞</span>
+          <span id="dark-icon" class="hidden">🌙</span>
+        </button>
+
+        <!-- Botón de cambio de modo (web/cv) -->
+        <button
+          id="mode-toggle"
+          class="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500"
+          aria-label="Cambiar modo"
+        >
+          <span id="cv-icon" class="hidden">📄</span>
+          <span id="web-icon" class="hidden">🌐</span>
+        </button>
+
+        <!-- Menú hamburguesa para móviles (solo en modo web) -->
+        {
+          showFullNav && (
+            <button
+              id="mobile-menu-button"
+              class="md:hidden p-2"
+              aria-label="Menú"
+            >
+              ≡
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Menú móvil (oculto por defecto) -->
+  {
+    showFullNav && (
+      <div id="mobile-menu" class="md:hidden hidden px-4 pb-4">
+        <div class="flex flex-col space-y-3">
+          {navItems.map((item) => (
+            <a
+              href={item.href}
+              class="py-2 hover:text-web-light-primary dark:hover:text-web-dark-primary transition-colors"
             >
               {item.name}
             </a>
           ))}
         </div>
-      )}
-
-      <!-- Botones de modo y tema -->
-      <div class="flex items-center space-x-4">
-        <!-- Botón de cambio de tema (claro/oscuro) -->
-        <button 
-          id="theme-toggle" 
-          class="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500"
-          aria-label="Cambiar tema"
-        >
-          <!-- Icono sol para modo oscuro -->
-          <span id="light-icon" class={theme === 'dark' ? 'block' : 'hidden'}>🌞</span>
-          <!-- Icono luna para modo claro -->
-          <span id="dark-icon" class={theme === 'light' ? 'block' : 'hidden'}>🌙</span>
-        </button>
-        
-        <!-- Botón de cambio de modo (web/cv) -->
-        <button 
-          id="mode-toggle" 
-          class="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500"
-          aria-label="Cambiar modo"
-        >
-          <!-- Icono CV para modo web -->
-          <span id="cv-icon" class={mode === 'web' ? 'block' : 'hidden'}>📄</span>
-          <!-- Icono Web para modo CV -->
-          <span id="web-icon" class={mode === 'cv' ? 'block' : 'hidden'}>🌐</span>
-        </button>
-        
-        <!-- Menú hamburguesa para móviles (solo en modo web) -->
-        {showFullNav && (
-          <button 
-            id="mobile-menu-button" 
-            class="md:hidden p-2"
-            aria-label="Menú"
-          >
-            ≡
-          </button>
-        )}
       </div>
-    </div>
-  </div>
-  
-  <!-- Menú móvil (oculto por defecto) -->
-  {showFullNav && (
-    <div id="mobile-menu" class="md:hidden hidden px-4 pb-4">
-      <div class="flex flex-col space-y-3">
-        {navItems.map(item => (
-          <a 
-            href={item.href} 
-            class="py-2 hover:text-primary transition-colors"
+    )
+  }
+</nav>
+
+<!-- Navegación lateral (solo en modo web) -->
+{
+  showFullNav && (
+    <nav
+      id="side-nav"
+      class="fixed right-4 top-1/2 transform -translate-y-1/2 hidden z-40 transition-all duration-300"
+    >
+      <div class="flex flex-col space-y-4">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class="p-2 rounded-full bg-web-light-primary text-white hover:bg-opacity-90 transition-all dark:bg-web-dark-primary"
+            title={item.name}
           >
-            {item.name}
+            {item.icon.charAt(0).toUpperCase()}
           </a>
         ))}
       </div>
-    </div>
-  )}
-</nav>
-
-<!-- Navegación lateral que aparecerá al hacer scroll (solo en modo web) -->
-{showFullNav && (
-  <nav id="side-nav" class="fixed right-4 top-1/2 transform -translate-y-1/2 hidden z-40">
-    <div class="flex flex-col space-y-4">
-      {navItems.map(item => (
-        <a 
-          href={item.href} 
-          class="p-2 rounded-full bg-primary text-white hover:bg-opacity-90 transition-all"
-          title={item.name}
-        >
-          <!-- Aquí irían iconos, pero por simplicidad usemos letras -->
-          {item.icon.charAt(0).toUpperCase()}
-        </a>
-      ))}
-    </div>
-  </nav>
-)}
+    </nav>
+  )
+}
 
 <script>
-  // Lógica para el menú móvil
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  
-  if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-  }
-  
-  // Lógica para cambiar tema (claro/oscuro)
-  const themeToggle = document.getElementById('theme-toggle');
-  const lightIcon = document.getElementById('light-icon');
-  const darkIcon = document.getElementById('dark-icon');
-  
-  if (themeToggle && lightIcon && darkIcon) {
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      document.body.classList.toggle('light');
-      
-      lightIcon.classList.toggle('hidden');
-      darkIcon.classList.toggle('hidden');
-      
-      const newTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
-      localStorage.setItem('theme', newTheme);
-    });
-  }
-  
-  // Lógica para cambiar modo (web/cv)
-  const modeToggle = document.getElementById('mode-toggle');
-  const cvIcon = document.getElementById('cv-icon');
-  const webIcon = document.getElementById('web-icon');
-  
-  if (modeToggle && cvIcon && webIcon) {
-    modeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('mode-web');
-      document.body.classList.toggle('mode-cv');
-      
-      cvIcon.classList.toggle('hidden');
-      webIcon.classList.toggle('hidden');
-      
-      const newMode = document.body.classList.contains('mode-web') ? 'web' : 'cv';
-      localStorage.setItem('mode', newMode);
-      
-      // Recargar la página para aplicar los cambios correctamente
-      location.reload();
-    });
-  }
-  
-  // Lógica para la navegación lateral al hacer scroll
-  const mainNav = document.getElementById('main-nav');
-  const sideNav = document.getElementById('side-nav');
-  
-  if (mainNav && sideNav) {
-    let lastScrollY = window.scrollY;
-    
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      
-      // Mostrar/ocultar navegación principal
-      if (currentScrollY > 100) {
-        if (currentScrollY > lastScrollY) {
-          // Scrolling down
-          mainNav.classList.add('transform', '-translate-y-full');
-          sideNav.classList.remove('hidden');
-        } else {
-          // Scrolling up
-          mainNav.classList.remove('transform', '-translate-y-full');
-        }
+  // Asegurarnos de que el DOM esté listo
+  document.addEventListener("DOMContentLoaded", () => {
+    // Inicializar el estado desde localStorage al cargar la página
+    const savedTheme = localStorage.getItem("theme") || "light";
+    const savedMode = localStorage.getItem("mode") || "web";
+
+    // Aplicar clases iniciales al body
+    document.body.classList.add(savedTheme);
+    document.body.classList.add(`mode-${savedMode}`);
+
+    // Actualizar íconos según el estado inicial
+    const lightIcon = document.getElementById("light-icon");
+    const darkIcon = document.getElementById("dark-icon");
+    const cvIcon = document.getElementById("cv-icon");
+    const webIcon = document.getElementById("web-icon");
+
+    if (lightIcon && darkIcon && cvIcon && webIcon) {
+      if (savedTheme === "dark") {
+        lightIcon.classList.remove("hidden");
+        darkIcon.classList.add("hidden");
       } else {
-        // En la parte superior
-        mainNav.classList.remove('transform', '-translate-y-full');
-        sideNav.classList.add('hidden');
+        lightIcon.classList.add("hidden");
+        darkIcon.classList.remove("hidden");
       }
-      
-      lastScrollY = currentScrollY;
-    });
-  }
+
+      if (savedMode === "cv") {
+        cvIcon.classList.add("hidden");
+        webIcon.classList.remove("hidden");
+      } else {
+        cvIcon.classList.remove("hidden");
+        webIcon.classList.add("hidden");
+      }
+    }
+
+    // Lógica para el menú móvil
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+    }
+
+    // Lógica para cambiar tema (claro/oscuro)
+    const themeToggle = document.getElementById("theme-toggle");
+    if (themeToggle && lightIcon && darkIcon) {
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        document.body.classList.toggle("light");
+
+        lightIcon.classList.toggle("hidden");
+        darkIcon.classList.toggle("hidden");
+
+        const newTheme = document.body.classList.contains("dark")
+          ? "dark"
+          : "light";
+        localStorage.setItem("theme", newTheme);
+      });
+    }
+
+    // Lógica para cambiar modo (web/cv)
+    const modeToggle = document.getElementById("mode-toggle");
+    const mainNav = document.getElementById("main-nav");
+    if (modeToggle && cvIcon && webIcon && mainNav) {
+      modeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("mode-web");
+        document.body.classList.toggle("mode-cv");
+
+        cvIcon.classList.toggle("hidden");
+        webIcon.classList.toggle("hidden");
+
+        const newMode = document.body.classList.contains("mode-web")
+          ? "web"
+          : "cv";
+        localStorage.setItem("mode", newMode);
+
+        // Actualizar estilos dinámicamente sin recargar
+        if (newMode === "cv") {
+          mainNav.classList.add(
+            "bg-cv-light-background",
+            "text-cv-light-text"
+          );
+          mainNav.classList.remove(
+            "bg-web-light-background",
+            "text-web-light-text"
+          );
+          if (document.body.classList.contains("dark")) {
+            mainNav.classList.add(
+              "bg-cv-dark-background",
+              "text-cv-dark-text"
+            );
+            mainNav.classList.remove(
+              "bg-web-dark-background",
+              "text-web-dark-text"
+            );
+          }
+        } else {
+          mainNav.classList.add(
+            "bg-web-light-background",
+            "text-web-light-text"
+          );
+          mainNav.classList.remove("bg-cv-light-background", "text-cv-light-text");
+          if (document.body.classList.contains("dark")) {
+            mainNav.classList.add(
+              "bg-web-dark-background",
+              "text-web-dark-text"
+            );
+            mainNav.classList.remove(
+              "bg-cv-dark-background",
+              "text-cv-dark-text"
+            );
+          }
+        }
+      });
+    }
+
+    // Lógica para la navegación al hacer scroll
+    const sideNav = document.getElementById("side-nav");
+    if (mainNav && sideNav) {
+      window.addEventListener("scroll", () => {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY === 0) {
+          mainNav.classList.remove("transform", "-translate-y-full");
+          sideNav.classList.add("hidden");
+        } else {
+          mainNav.classList.add("transform", "-translate-y-full");
+          sideNav.classList.remove("hidden");
+        }
+      });
+    }
+  });
 </script>
+
+<style>
+  /* Modo Web - Claro */
+  .bg-web-light-background { @apply bg-[#f9fafb]; }
+  .text-web-light-text { @apply text-[#1f2937]; }
+  .bg-web-light-primary { @apply bg-[#3b82f6]; }
+  .hover:text-web-light-primary { @apply hover:text-[#3b82f6]; }
+
+  /* Modo Web - Oscuro */
+  .bg-web-dark-background { @apply bg-[#111827]; }
+  .text-web-dark-text { @apply text-[#f3f4f6]; }
+  .bg-web-dark-primary { @apply bg-[#60a5fa]; }
+  .dark:hover:text-web-dark-primary { @apply dark:hover:text-[#60a5fa]; }
+
+  /* Modo CV - Claro */
+  .bg-cv-light-background { @apply bg-[#ffffff]; }
+  .text-cv-light-text { @apply text-[#1f2937]; }
+  .bg-cv-light-primary { @apply bg-[#8b5cf6]; }
+
+  /* Modo CV - Oscuro */
+  .bg-cv-dark-background { @apply bg-[#1e1b4b]; }
+  .text-cv-dark-text { @apply text-[#f3f4f6]; }
+  .bg-cv-dark-primary { @apply bg-[#a78bfa]; }
+</style>
